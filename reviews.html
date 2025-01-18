@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}All Reviews{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="display-4">All Reviews for {{ product['Clothes Title'] }}</h1>
+
+    <!-- Sort by options -->
+    <div class="d-flex justify-content-end align-items-center mb-3">
+        <label class="me-2 mb-0">Sort by:</label>
+        <select id="sort-options" class="form-select w-auto" onchange="fetchReviews()">
+            <option value="newest" selected>Newest</option>
+            <option value="most_helpful">Most Helpful</option>
+        </select>
+    </div>
+
+    <!-- Loading message -->
+    <div id="loading-message" class="text-center" style="display: none;">
+        <p>Loading...</p>
+    </div>
+
+    <!-- Reviews List -->
+    <ul class="list-group" id="reviews-list">
+        <!-- Reviews will be injected here -->
+    </ul>
+</div>
+
+<script>
+    function fetchReviews() {
+        const sortOption = document.getElementById('sort-options').value;
+        const reviewsList = document.getElementById('reviews-list');
+        const loadingMessage = document.getElementById('loading-message');
+        
+        // Clear the current reviews and show loading message
+        reviewsList.innerHTML = '';
+        loadingMessage.style.display = 'block';
+
+        // Fetch the sorted reviews
+        fetch(`{{ url_for('main.fetch_reviews', product_id=product['Clothing ID']) }}?sort_by=${sortOption}`)
+            .then(response => response.json())
+            .then(data => {
+                loadingMessage.style.display = 'none';  // Hide loading message
+
+                // Check if there are any reviews returned
+                if (data.reviews && data.reviews.length > 0) {
+                    // Inject reviews into the list
+                    data.reviews.forEach(review => {
+                        const reviewItem = document.createElement('li');
+                        reviewItem.className = 'list-group-item';
+                        reviewItem.innerHTML = `<strong>${review.Title} - ${review.Rating}/5</strong><br>
+                                                ${review['Review Text']}<br>
+                                                <small>${review['Positive Feedback Count']} people found this review helpful</small>`;
+                        reviewsList.appendChild(reviewItem);
+                    });
+                } else {
+                    // If no reviews are returned
+                    reviewsList.innerHTML = '<li class="list-group-item text-center">No reviews available.</li>';
+                }
+            })
+            .catch(error => {
+                loadingMessage.style.display = 'none';  // Hide loading message on error
+                reviewsList.innerHTML = '<li class="list-group-item text-center text-danger">Failed to load reviews. Please try again later.</li>';
+                console.error('Error fetching reviews:', error);
+            });
+    }
+
+    // Fetch the initial list of reviews when the page loads
+    document.addEventListener('DOMContentLoaded', fetchReviews);
+</script>
+{% endblock %}

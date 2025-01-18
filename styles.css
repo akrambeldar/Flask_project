@@ -1,0 +1,62 @@
+/* Google Material Design-inspired dark colors */
+:root {
+    --black-900: #121212;  /* Highest depth */
+    --black-800: #1e1e1e;
+    --black-700: #242424;
+    --black-600: #2e2e2e;
+    --black-500: #383838;  /* Lighter depth */
+}
+
+/* Apply these custom colors across your app */
+body {
+    background-color: var(--black-900);
+}
+
+.navbar {
+    background-color: var(--black-800);
+}
+
+.container {
+    background-color: var(--black-700);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.navbar-brand, .nav-link {
+    color: white;
+}
+
+.nav-link:hover {
+    color: var(--black-500);
+}
+
+/* Custom styles for the product cards */
+.card {
+    background-color: #343a40; /* Dark gray background */
+    color: white; /* Keep text white */
+}
+
+.card .card-subtitle {
+    color: white; /* Lighter gray for subtitles */
+}
+
+.card .btn-primary {
+    background-color: #007bff; /* Ensure the button stays visible */
+    border: none;
+}
+
+/* Styling for the product detail page */
+h1.display-4 {
+    color: white; /* Customize the title color */
+}
+
+textarea.form-control {
+    border-radius: 10px; /* Rounded corners for the textarea */
+}
+
+button.btn-primary {
+    background-color: #007bff;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="display-4">Browse by Categories</h1>
+
+    <!-- Browse by Divisions -->
+    <h3 class="mt-4">Divisions</h3>
+    <ul class="list-group">
+        {% for division in divisions %}
+            <li class="list-group-item">
+                <a href="{{ url_for('main.browse_departments', division_name=division) }}">{{ division }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- If Departments are being passed -->
+    {% if departments %}
+        <h3 class="mt-4">Departments in {{ current_division }}</h3>
+        <ul class="list-group">
+            {% for department in departments %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('main.browse_classes', department_name=department) }}">{{ department }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <!-- If Class Names are being passed -->
+    {% if class_names %}
+        <h3 class="mt-4">Classes in {{ current_department }}</h3>
+        <ul class="list-group">
+            {% for class_name in class_names %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('main.browse_clothes', class_name=class_name) }}">{{ class_name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Classes{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="display-4">Classes in {{ department_name }}</h1>
+    <ul class="list-group mt-4">
+        {% for class_name in class_names %}
+            <li class="list-group-item">
+                <a href="{{ url_for('main.browse_clothes', class_name=class_name) }}">{{ class_name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

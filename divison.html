@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Divisions{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="display-4">Browse by Division</h1>
+    <ul class="list-group mt-4">
+        {% for division in divisions %}
+            <li class="list-group-item">
+                <a href="{{ url_for('main.browse_departments', division_name=division) }}">{{ division }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

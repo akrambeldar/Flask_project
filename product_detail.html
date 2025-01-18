@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}Product Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Product Name -->
+    <h1 class="display-4">{{ product['Clothes Title'] }}</h1>
+
+    <!-- Product Rating, Class Name, and Description -->
+    <p><strong>Rating:</strong> {{ product['Rating'] }}/5</p>
+    <p><strong>Type:</strong> {{ product['Class Name'] }}</p>
+    <p><strong>Description:</strong> {{ product['Clothes Description'] }}</p>
+
+    <!-- Write a Review Section -->
+    <hr>
+    <h3>Write a Review</h3>
+    <form action="{{ url_for('main.submit_review', product_id=product['Clothing ID']) }}" method="POST" id="review-form">
+        <div class="row mb-3">
+            <!-- Review Title -->
+            <div class="col-md-8">
+                <label for="reviewTitle">Review Title</label>
+                <input type="text" class="form-control" id="reviewTitle" name="reviewTitle" value="{{ form_data['reviewTitle'] if form_data else '' }}" placeholder="Enter the title of your review" required>
+            </div>
+
+            <!-- Rating Dropdown -->
+            <div class="col-md-2">
+                <label for="reviewRating">Rating</label>
+                <select class="form-control" id="reviewRating" name="reviewRating" required>
+                    <option value="" disabled selected>Select rating</option>
+                    {% for i in range(6) %}
+                        <option value="{{ i }}" {% if form_data and form_data['reviewRating'] == i %} selected {% endif %}>{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Reviewer Age -->
+            <div class="col-md-2">
+                <label for="reviewAge">Your Age</label>
+                <input type="number" class="form-control" id="reviewAge" name="reviewAge" min="18" max="150" value="{{ request.form['reviewAge'] if request.form else '' }}" placeholder="Enter your age" required>
+            </div>
+        </div>
+
+        <!-- Review Text Area -->
+        <div class="form-group mb-3">
+            <label for="reviewText">Review Text</label>
+            <textarea class="form-control" id="reviewText" name="reviewText" rows="5" placeholder="Write your review here..." required>{{ request.form['reviewText'] if request.form else '' }}</textarea>
+        </div>
+
+        <!-- Right-Aligned Submit Button -->
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </div>
+    </form>
+
+    <!-- Loading message (hidden initially) -->
+    <div id="loading-message" class="mt-3" style="display: none;">
+        <p>Please wait while your review is being processed...</p>
+    </div>
+
+    <!-- Review recommendation result -->
+    {% if recommends is not none %}
+    <div class="mt-3">
+        {% if recommends %}
+            <p>Your recent review recommends this product!</p>
+        {% else %}
+            <p>Your recent review does not recommend this product.</p>
+        {% endif %}
+
+        <!-- Confirmation prompt and recommendation handling -->
+        <div id="confirmation-prompt" class="mt-3" {% if noSelected %} style="display: none;" {% endif %}>
+            <p>Do you agree with this recommendation classification?</p>
+            <button class="btn btn-success" onclick="saveReview(true)">Yes</button>
+            <button class="btn btn-danger" onclick="selectNo()">No</button>
+        </div>
+
+        <!-- No selection (read-only) and override prompt -->
+        <div id="no-selection" class="mt-3" {% if not noSelected %} style="display: none;" {% endif %}>
+            <p>You selected: No (this selection is now read-only)</p>
+        </div>
+        <div id="override-prompt" class="mt-3" style="display: none;">
+            <p>Do you recommend this product?</p>
+            <button class="btn btn-success" onclick="saveReview(true)">Yes</button>
+            <button class="btn btn-danger" onclick="saveReview(false)">No</button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Reviews Section -->
+    <hr>
+    <h3>Most Helpful Customer Reviews</h3>
+    <br>
+    {% if reviews and reviews|length > 0 %}
+        <ul class="list-group">
+            {% for review in reviews %}
+                <li class="list-group-item">
+                    <strong>{{ review['Title'] }} - {{ review['Rating'] }}/5</strong><br>
+                    {{ review['Review Text'] }}<br>
+                    <small>{{ review['Positive Feedback Count'] }} people found this review helpful</small>
+                </li>
+            {% endfor %}
+        </ul>
+        <br>
+        <a href="{{ url_for('main.reviews', product_id=product['Clothing ID']) }}" class="btn btn-primary">View all reviews</a>
+    {% else %}
+        <p>No reviews yet. Be the first to write one!</p>
+    {% endif %}
+
+
+<!-- JavaScript to handle recommendation confirmation -->
+<script>
+    function saveReview(recommends) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{{ url_for('main.save_review', product_id=product['Clothing ID']) }}";
+
+        // Add review details to be sent with the final recommendation
+        const reviewTitleInput = document.createElement('input');
+        reviewTitleInput.type = 'hidden';
+        reviewTitleInput.name = 'reviewTitle';
+        reviewTitleInput.value = "{{ request.form['reviewTitle'] if request.form else '' }}";
+        form.appendChild(reviewTitleInput);
+
+        const reviewRatingInput = document.createElement('input');
+        reviewRatingInput.type = 'hidden';
+        reviewRatingInput.name = 'reviewRating';
+        reviewRatingInput.value = "{{ request.form['reviewRating'] if request.form else '' }}";
+        form.appendChild(reviewRatingInput);
+
+        const reviewAgeInput = document.createElement('input');
+        reviewAgeInput.type = 'hidden';
+        reviewAgeInput.name = 'reviewAge';
+        reviewAgeInput.value = "{{ request.form['reviewAge'] if request.form else '' }}";
+        form.appendChild(reviewAgeInput);
+
+        const reviewTextInput = document.createElement('input');
+        reviewTextInput.type = 'hidden';
+        reviewTextInput.name = 'reviewText';
+        reviewTextInput.value = "{{ request.form['reviewText'] if request.form else '' }}";
+        form.appendChild(reviewTextInput);
+
+        // Add the recommendation (Yes = 1, No = 0)
+        const recommendationInput = document.createElement('input');
+        recommendationInput.type = 'hidden';
+        recommendationInput.name = 'recommendation';
+        recommendationInput.value = recommends ? 1 : 0;
+        form.appendChild(recommendationInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    function selectNo() {
+        document.getElementById('confirmation-prompt').style.display = 'none';
+        document.getElementById('no-selection').style.display = 'block';
+        document.getElementById('override-prompt').style.display = 'block';
+
+        // Retain "No" selection visibility on reload
+        const noSelectedInput = document.createElement('input');
+        noSelectedInput.type = 'hidden';
+        noSelectedInput.name = 'noSelected';
+        noSelectedInput.value = 'true';
+        document.getElementById('review-form').appendChild(noSelectedInput);
+    }
+</script>
+{% endblock %}
