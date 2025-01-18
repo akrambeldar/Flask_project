@@ -1,5 +1,5 @@
 
-This repository contains a Flask web application that includes machine learning models and other assets. Please ensure you maintain the folder structure as described below to run the web app without any errors.
+This repository contains a Flask web application that includes machine learning models and other assets. Please ensure you maintain the folder structure as described in the "flask_project_dir"to run the web app without any errors.
 
 Prerequisites:
 --------------
