@@ -1,0 +1,27 @@
+lask_project/
+│
+├── app/
+│   ├── __pycache__/                    
+│   ├── models/
+│   │   ├── fasttext_model.bin
+│   │   ├── logistic_regression_model.pkl
+│   │   └── tfidf_vectorizer.pkl
+│   ├── static/
+│   │   └── css/
+│   ├── templates/
+│   │   ├── classes/
+│   │   ├── browse/
+│   │   ├── categories/
+│   │   ├── clothes/
+│   │   ├── department/
+│   │   ├── division/
+│   │   ├── home/
+│   │   ├── product_retail/
+│   │   ├── reviews/
+│   │   └── search_results/
+│   ├── __init__.py
+│   └── routes.py
+│
+├── cloth_data/                        # Dataset directory (if needed)
+├── requirements.txt                   # Project dependencies
+└── run.py                              # Main entry point to run the Flask app
